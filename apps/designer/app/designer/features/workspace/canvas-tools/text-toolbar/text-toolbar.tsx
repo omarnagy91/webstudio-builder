@@ -5,7 +5,11 @@ import {
   type TextToolbarState,
   useTextToolbarState,
 } from "~/designer/shared/nano-states";
-import { ToggleGroup, type CSS } from "@webstudio-is/design-system";
+import {
+  ToggleGroupRoot,
+  ToggleGroupItem,
+  type CSS,
+} from "@webstudio-is/design-system";
 import { FontBoldIcon, FontItalicIcon, Link2Icon } from "@webstudio-is/icons";
 import { useSubscribe } from "~/shared/pubsub";
 
@@ -81,7 +85,7 @@ const Toolbar = ({ css, rootRef, state, onToggle }: ToolbarProps) => {
     value.push("link");
   }
   return (
-    <ToggleGroup.Root
+    <ToggleGroupRoot
       ref={rootRef}
       type="multiple"
       value={value}
@@ -106,16 +110,16 @@ const Toolbar = ({ css, rootRef, state, onToggle }: ToolbarProps) => {
         ...css,
       }}
     >
-      <ToggleGroup.Item value="bold">
+      <ToggleGroupItem value="bold">
         <FontBoldIcon />
-      </ToggleGroup.Item>
-      <ToggleGroup.Item value="italic">
+      </ToggleGroupItem>
+      <ToggleGroupItem value="italic">
         <FontItalicIcon />
-      </ToggleGroup.Item>
-      <ToggleGroup.Item value="link">
+      </ToggleGroupItem>
+      <ToggleGroupItem value="link">
         <Link2Icon />
-      </ToggleGroup.Item>
-    </ToggleGroup.Root>
+      </ToggleGroupItem>
+    </ToggleGroupRoot>
   );
 };
 
