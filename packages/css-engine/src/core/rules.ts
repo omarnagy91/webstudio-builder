@@ -1,11 +1,6 @@
-import {
-  Breakpoint,
-  Style,
-  toValue,
-  StyleProperty,
-  StyleValue,
-} from "@webstudio-is/react-sdk";
+import { Breakpoint, Style, StyleProperty, StyleValue } from "../schema";
 import hyphenate from "hyphenate-style-name";
+import { toValue } from "./to-value";
 
 class StylePropertyMap {
   #styleMap: Map<StyleProperty, StyleValue | undefined> = new Map();

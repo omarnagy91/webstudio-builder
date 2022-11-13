@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   categories,
-  toValue,
   type StyleProperty,
   type StyleValue,
 } from "@webstudio-is/react-sdk";
@@ -11,6 +10,7 @@ import { useIsFromCurrentBreakpoint } from "../../shared/use-is-from-current-bre
 import { propertyNameColorForSelectedBreakpoint } from "../../shared/constants";
 import { getFinalValue } from "../../shared/get-final-value";
 import type { RenderCategoryProps } from "../../style-sections";
+import { toValue } from "@webstudio-is/css-engine";
 
 type SpacingSingularStyle = { [property in SpacingProperty]?: StyleValue };
 

@@ -1,6 +1,6 @@
 import { detectFont } from "detect-font";
 import type { StyleProperty } from "./types";
-import type { Style, StyleValue, Unit } from "./schema";
+import type { Style, StyleValue, Unit } from "@webstudio-is/css-engine";
 import { properties } from "./properties";
 import { units } from "./units";
 

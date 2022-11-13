@@ -1,6 +1,9 @@
 import { z } from "zod";
-import { units } from "./units";
-import { StyleProperty } from "./types";
+// @todo move it
+import { units } from "@webstudio-is/react-sdk/src/css/units";
+import { StyleProperty } from "@webstudio-is/react-sdk/src/css/types";
+
+export type { StyleProperty };
 
 export const Unit = z.union([z.enum(units), z.literal("number")]);
 
@@ -84,6 +87,6 @@ export const Breakpoint = z.object({
   minWidth: z.number(),
 });
 
-export const Breakpoints = z.array(Breakpoint);
-
 export type Breakpoint = z.infer<typeof Breakpoint>;
+
+export const Breakpoints = z.array(Breakpoint);

@@ -1,4 +1,4 @@
-import { Breakpoint, CssRule } from "@webstudio-is/react-sdk";
+import type { Breakpoint, CssRule } from "../schema";
 import { MediaRule, StyleRule } from "./rules";
 import { StyleElement } from "./style-element";
 import { StyleSheet } from "./style-sheet";

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@webstudio-is/react-sdk": "*",
+    "@webstudio-is/fonts": "*",
     "hyphenate-style-name": "^1.0.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"

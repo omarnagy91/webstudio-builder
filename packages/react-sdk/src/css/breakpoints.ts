@@ -1,4 +1,4 @@
-import { type Breakpoint } from "./schema";
+import { type Breakpoint } from "@webstudio-is/css-engine/src/schema";
 
 export type BaseBreakpoint = Pick<Breakpoint, "label" | "minWidth">;
 
