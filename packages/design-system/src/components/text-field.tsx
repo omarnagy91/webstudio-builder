@@ -24,7 +24,7 @@ const getTextFieldSuffixCssVars = (state: "focus" | "hover") => {
 
 const textFieldIconBaseStyle = css({
   height: "$spacing$11",
-  minWidth: "$spacing$5",
+  width: "$spacing$11",
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",

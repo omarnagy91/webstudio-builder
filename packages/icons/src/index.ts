@@ -43,6 +43,8 @@ export * from "./gap-row";
 export * from "./gap-column";
 export * from "./lock-open";
 export * from "./lock-close";
+export * from "./link-linked";
+export * from "./link-unlinked";
 export * from "./aspect-ratio";
 export * from "./cloud";
 export * from "./trash";
