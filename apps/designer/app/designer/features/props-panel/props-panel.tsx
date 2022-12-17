@@ -34,6 +34,7 @@ import {
   type SetProperty,
 } from "../style-panel/shared/use-style-data";
 import type { Style } from "@webstudio-is/css-data";
+import { ValuePickerPopover } from "../style-panel/shared/value-picker-popover";
 
 type ComboboxProps = {
   isReadonly: boolean;
@@ -85,7 +86,7 @@ const Combobox = ({
               },
             })}
             name="prop"
-            placeholder="Property"
+            placeholder="PropertyEditor"
             readOnly={isReadonly}
             state={isInvalid ? "invalid" : undefined}
             suffix={
@@ -127,7 +128,7 @@ type PropertyProps = {
   existingProps: string[];
 };
 
-const Property = ({
+const PropertyEditor = ({
   userProp,
   component,
   onChangePropName,
@@ -158,7 +159,7 @@ const Property = ({
       {required ? (
         <TextField
           name="prop"
-          placeholder="Property"
+          placeholder="PropertyEditor"
           readOnly={true}
           state={isInvalid ? "invalid" : undefined}
           value={userProp.prop}
@@ -179,7 +180,7 @@ const Property = ({
               onChangePropName(name);
               return;
             }
-            setError(`Property "${name}" is already exists`);
+            setError(`PropertyEditor "${name}" is already exists`);
           }}
           onInput={() => {
             setError(undefined);
@@ -236,25 +237,42 @@ export const PropsPanel = ({
     handleDeleteProp,
     isRequired,
   } = usePropsLogic({ selectedInstanceData, publish });
+  const [isOpen, setIsOpen] = useState(false);
 
   const { setProperty: setCssProperty, currentStyle } = useStyleData({
     selectedInstanceData,
     publish,
   });
 
-  const addButton = (
-    <Button
-      ghost
-      onClick={(event) => {
-        event.preventDefault();
-        addEmptyProp();
-      }}
-    >
-      <PlusIcon />
-    </Button>
+  const existingProps = userProps.map((userProp) => userProp.prop);
+
+  const propertyEditor = (
+    <PropertyEditor
+      component={selectedInstanceData.component}
+      //onChange={console.log}
+      currentStyle={currentStyle}
+      existingProps={existingProps}
+    />
   );
 
-  const existingProps = userProps.map((userProp) => userProp.prop);
+  const addButton = (
+    <ValuePickerPopover
+      title="Add property"
+      content={propertyEditor}
+      onOpenChange={setIsOpen}
+    >
+      <Button
+        ghost
+        state={isOpen ? "active" : undefined}
+        onClick={(event) => {
+          event.preventDefault();
+          addEmptyProp();
+        }}
+      >
+        <PlusIcon />
+      </Button>
+    </ValuePickerPopover>
+  );
 
   return (
     <Box>
@@ -274,7 +292,7 @@ export const PropsPanel = ({
           }}
         >
           {userProps.map((userProp) => (
-            <Property
+            <PropertyEditor
               key={userProp.id}
               userProp={userProp}
               component={selectedInstanceData.component}
