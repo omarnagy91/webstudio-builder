@@ -212,6 +212,7 @@ export async function createBuild(
       instances: serializeInstances(new Map(newInstances)),
       isDev: props.env === "dev",
       isProd: props.env === "prod",
+      status: props.env === "dev" ? "done" : "created",
     },
   });
 }

@@ -16,6 +16,7 @@ export const Project = z.object({
   userId: z.string().nullable(),
   isDeleted: z.boolean(),
   domain: z.string(),
+  build: z.any(),
 });
 export type Project = z.infer<typeof Project>;
 

@@ -1,8 +1,10 @@
 import type { ActionArgs } from "@remix-run/node";
+import { prisma } from "@webstudio-is/prisma-client";
 import { zfd } from "zod-form-data";
 import env from "~/env/env.server";
 import { createContext } from "~/shared/context.server";
 import * as db from "~/shared/db";
+import { BUILD_TIMEOUT } from "~/shared/remix/constants";
 
 const schema = zfd.formData({
   domain: zfd.text(),
@@ -14,6 +16,16 @@ export const action = async ({ request }: ActionArgs) => {
 
   try {
     const context = await createContext(request);
+
+    await prisma.build.updateMany({
+      where: {
+        projectId,
+        isProd: true,
+        status: { in: ["created", "started"] },
+        stateUpdatedAt: { gt: new Date(Date.now() - BUILD_TIMEOUT) },
+      },
+      data: { status: "failed", stateUpdatedAt: new Date() },
+    });
 
     await db.misc.publish({ projectId, domain }, context);
     if (env.PUBLISHER_ENDPOINT && env.PUBLISHER_TOKEN) {

@@ -71,6 +71,13 @@ model Project {
   @@unique([domain, isDeleted])
 }
 
+enum BuildStatus {
+  created
+  started
+  done
+  failed
+}
+
 model Build {
   id        String   @default(uuid())
   createdAt DateTime @default(now())
@@ -88,6 +95,9 @@ model Build {
   styleSourceSelections String @default("[]")
   props                 String @default("[]")
   instances             String @default("[]")
+
+  status         BuildStatus @default(created)
+  stateUpdatedAt DateTime    @default(now())
 
   @@id([id, projectId])
 }

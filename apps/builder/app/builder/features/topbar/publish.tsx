@@ -21,6 +21,7 @@ import type { Project } from "@webstudio-is/project";
 import { getPublishedUrl, restPublishPath } from "~/shared/router-utils";
 import { theme } from "@webstudio-is/design-system";
 import { useAuthPermit } from "~/shared/nano-states";
+import { BUILD_TIMEOUT } from "~/shared/remix/constants";
 type PublishButtonProps = { project: Project };
 
 const Content = ({ project }: PublishButtonProps) => {
@@ -28,7 +29,17 @@ const Content = ({ project }: PublishButtonProps) => {
   const fetcher = useFetcher();
   const [url, setUrl] = useState<string>();
   const domain = fetcher.data?.domain || project.domain;
-
+  const latestBuild = project.build.find((build: any) => build.isProd === true);
+  let publishAllowed = true;
+  if (latestBuild) {
+    if (
+      (latestBuild.status === "created" || latestBuild.status === "started") &&
+      new Date(latestBuild.stateUpdatedAt) >
+        new Date(Date.now() - BUILD_TIMEOUT)
+    ) {
+      publishAllowed = false;
+    }
+  }
   useEffect(() => {
     setUrl(getPublishedUrl(domain));
   }, [domain]);
@@ -67,11 +78,17 @@ const Content = ({ project }: PublishButtonProps) => {
             <Button
               state={fetcher.state !== "idle" ? "pending" : "auto"}
               type="submit"
+              disabled={!publishAllowed}
               css={{ flexGrow: 1 }}
             >
               {fetcher.state !== "idle" ? "Publishing" : "Publish"}
             </Button>
           </Flex>
+          {!publishAllowed && (
+            <Text color="destructive">
+              Publishing is in {latestBuild.status} status.
+            </Text>
+          )}
         </Flex>
       </fetcher.Form>
     </Flex>
