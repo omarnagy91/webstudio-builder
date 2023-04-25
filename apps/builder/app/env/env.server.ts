@@ -71,6 +71,10 @@ const env = {
    * without ending slash
    */
   RESIZE_ORIGIN: process.env.RESIZE_ORIGIN,
+
+  // AI Features
+  OPENAI_KEY: process.env.OPENAI_KEY,
+  OPENAI_ORG: process.env.OPENAI_ORG,
 };
 
 export type ServerEnv = typeof env;

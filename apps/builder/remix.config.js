@@ -25,7 +25,7 @@ module.exports = {
     "decode-named-character-reference",
     "character-entities",
     /mdast-/,
-    "unist-util-stringify-position",
+    /unist-/,
   ],
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",

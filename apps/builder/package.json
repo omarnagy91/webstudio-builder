@@ -38,6 +38,7 @@
     "@sentry/types": "7.47.0",
     "@trpc/server": "^10.9.0",
     "@vercel/remix": "^1.15.0",
+    "@webstudio-is/ai": "workspace:^",
     "@webstudio-is/asset-uploader": "workspace:^",
     "@webstudio-is/authorization-token": "workspace:^",
     "@webstudio-is/css-data": "workspace:^",
@@ -74,6 +75,7 @@
     "nanoid": "^3.2.0",
     "nanostores": "^0.7.1",
     "no-case": "^3.0.4",
+    "openai": "^3.2.1",
     "pretty-bytes": "^6.0.0",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
@@ -91,7 +93,8 @@
     "use-debounce": "^9.0.4",
     "uuid": "^9.0.0",
     "warn-once": "^0.1.1",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "zod-form-data": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
