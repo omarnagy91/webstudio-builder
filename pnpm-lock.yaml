@@ -170,6 +170,12 @@ importers:
       colord:
         specifier: ^2.9.3
         version: 2.9.3
+      css-box-shadow:
+        specifier: ^1.0.0-3
+        version: 1.0.0-3
+      css-tree:
+        specifier: ^2.3.1
+        version: 2.3.1(patch_hash=epgcmebti7rfrc2ej4odb3t4jy)
       date-fns:
         specifier: ^2.30.0
         version: 2.30.0
@@ -10938,6 +10944,10 @@ packages:
       public-encrypt: 4.0.3
       randombytes: 2.1.0
       randomfill: 1.0.4
+
+  /css-box-shadow@1.0.0-3:
+    resolution: {integrity: sha512-9jaqR6e7Ohds+aWwmhe6wILJ99xYQbfmK9QQB9CcMjDbTxPZjwEmUQpU91OG05Xgm8BahT5fW+svbsQGjS/zPg==}
+    dev: false
 
   /css-in-js-utils@2.0.1:
     resolution: {integrity: sha512-PJF0SpJT+WdbVVt0AOYp9C8GnuruRlL/UFW7932nLWmFLQTaWEzTBQEx7/hn4BuV+WON75iAViSUJLiU3PKbpA==}
