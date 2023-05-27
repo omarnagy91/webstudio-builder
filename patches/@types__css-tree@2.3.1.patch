@@ -1,0 +1,38 @@
+diff --git a/index.d.ts b/index.d.ts
+index e6a09d2756a7d942d7dbf2d6b9437deb06e8eb31..41cf6b6efdea7e800c77866c1e103c7be4b5c68f 100755
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -869,3 +869,33 @@ export function fork(extension: {
+     properties?: Record<string, string> | undefined,
+     types?: Record<string, string> | undefined,
+ }): { lexer: Lexer };
++
++type Match =
++  | {
++      syntax: { type: "Property"; name: string };
++      match: Match[];
++    }
++  | {
++      syntax: { type: "Type"; name: string };
++      match: Match[];
++    }
++  | {
++      syntax: { type: "Keyword"; name: string };
++      token: string;
++    }
++  | { syntax: null };
++
++type MatchProperty =
++  | {
++      matched: null;
++      error: { message: string };
++    }
++  // eslint-disable-next-line @typescript-eslint/ban-types
++  | {
++      matched: Match;
++      error: null;
++    };
++
++export declare const lexer: {
++  matchProperty: (property: string, ast: CssNode) => MatchProperty;
++};
