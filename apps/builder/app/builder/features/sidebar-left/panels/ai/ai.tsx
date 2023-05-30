@@ -10,6 +10,16 @@ import {
   theme,
 } from "@webstudio-is/design-system";
 
+import {
+  breakpointsStore,
+  instancesStore,
+  rootInstanceStore,
+  selectedInstanceSelectorStore,
+  selectedInstanceStore,
+  styleSourceSelectionsStore,
+  stylesStore,
+} from "~/shared/nano-states";
+
 import { EyeconOpenIcon } from "@webstudio-is/icons";
 import { useState } from "react";
 import type { Publish } from "~/shared/pubsub";
@@ -17,14 +27,19 @@ import { aiGenerationPath } from "~/shared/router-utils";
 import { CloseButton, Header } from "../../header";
 import type { TabName } from "../../types";
 
-import type {
-  EmbedTemplateProp,
-  EmbedTemplateStyleDecl,
-  WsEmbedTemplate,
+import {
+  generateCssText,
+  type EmbedTemplateProp,
+  type EmbedTemplateStyleDecl,
+  type WsEmbedTemplate,
 } from "@webstudio-is/react-sdk";
 
-import merge from "lodash.merge";
-import { insertTemplate } from "~/shared/instance-utils";
+import {
+  deleteInstance,
+  findSelectedInstance,
+  insertTemplate,
+} from "~/shared/instance-utils";
+import { findClosestDroppableTarget } from "~/shared/tree-utils";
 
 type TabContentProps = {
   onSetActiveTab: (tabName: TabName) => void;
@@ -65,6 +80,59 @@ const labels: Record<AIGenerationSteps, string> = {
   props: "components props",
 };
 
+const selectedInstanceToTemplateAndStyleSourceSelections =
+  function selectedInstanceToTemplateAndStyleSourceSelections(
+    instances = instancesStore.get(),
+    selectedInstance = selectedInstanceStore.get() || rootInstanceStore.get(),
+    styleSourceSelections = styleSourceSelectionsStore.get()
+  ) {
+    let jsx = "";
+    const templateStyleSourceSelections = new Map();
+
+    if (!selectedInstance) {
+      return { template: {}, jsx, styleSourceSelections };
+    }
+
+    const processInstances = function processInstances(
+      template: typeof selectedInstance
+    ) {
+      jsx += `<${template.component}`;
+
+      if (styleSourceSelections.has(template.id)) {
+        templateStyleSourceSelections.set(
+          template.id,
+          styleSourceSelections.get(template.id)
+        );
+
+        jsx += ` className="${template.id}"`;
+      }
+
+      jsx += `>`;
+
+      template.children.map((child) => {
+        if (child.type === "text") {
+          jsx += child.value;
+          return child;
+        }
+        const instanceId = child.value;
+        const childInstance = instances.get(instanceId);
+        return childInstance ? processInstances(childInstance) : undefined;
+      });
+
+      jsx += `</${template.component}>`;
+
+      return template;
+    };
+
+    const template = processInstances(selectedInstance);
+
+    return {
+      template,
+      jsx,
+      styleSourceSelections: templateStyleSourceSelections,
+    };
+  };
+
 export const TabContent = ({ publish, onSetActiveTab }: TabContentProps) => {
   // @todo Decide whether it makes sense to make "styles" optional
   // i.e. add a checkbox to tick if the user wants styles.
@@ -78,9 +146,63 @@ export const TabContent = ({ publish, onSetActiveTab }: TabContentProps) => {
     if (aiGenerationState.state !== "idle") {
       return;
     }
+    // const selectedInstanceSelector = selectedInstanceSelectorStore.get();
+    // console.log(selectedInstanceSelector);
+    // console.log(
+    //   findClosestDroppableTarget(
+    //     instancesStore.get(),
+    //     selectedInstanceSelector.slice(1),
+    //     []
+    //   )
+    // );
+    // console.log(findSelectedInstance());
+
+    // return;
+
+    const context = [];
 
     const form = event.currentTarget as HTMLFormElement;
     const baseData = new FormData(form);
+
+    const submitter = event.submitter || document.activeElement;
+
+    const isEdit =
+      submitter && submitter.name === "_action"
+        ? submitter.value === "edit"
+        : false;
+
+    baseData.append("_action", isEdit ? "edit" : "generate");
+
+    if (isEdit) {
+      const { jsx, styleSourceSelections } =
+        selectedInstanceToTemplateAndStyleSourceSelections();
+
+      const css = generateCssText(
+        {
+          assets: [],
+          breakpoints: breakpointsStore.get().entries(),
+          styles: stylesStore.get().entries(),
+          styleSourceSelections: styleSourceSelections.entries(),
+          componentMetas: new Map(),
+        },
+        {
+          assetBaseUrl: "/",
+          createSelector: ({ idAttribute, instanceId, state }) =>
+            `.${instanceId}${state ?? ""}`,
+        }
+      )
+        .replace(/\s\s+/g, " ")
+        .replace(/\n/g, "");
+
+      context.push(
+        ...[jsx, css].map((content) => [
+          {
+            role: "assistant",
+            content,
+          },
+        ])
+      );
+    }
 
     const responses: AIGenerationResponses = [
       // {
@@ -107,15 +229,29 @@ export const TabContent = ({ publish, onSetActiveTab }: TabContentProps) => {
 
       if (responses.length > 0) {
         // Send previous response for context.
-        formData.append(
-          "messages",
-          JSON.stringify([
-            {
-              role: "assistant",
-              content: JSON.stringify(responses[i - 1].response.code),
-            },
-          ])
-        );
+        const message = {
+          role: "assistant",
+          content: JSON.stringify(responses[i - 1].response.code),
+        };
+        if (Array.isArray(context[i])) {
+          context[i].push(message);
+        } else {
+          context[i] = [message];
+        }
+
+        // formData.append(
+        //   "messages",
+        //   JSON.stringify([
+        //     {
+        //       role: "assistant",
+        //       content: JSON.stringify(responses[i - 1].response.code),
+        //     },
+        //   ])
+        // );
+      }
+
+      if (Array.isArray(context[i]) && context[i].length > 0) {
+        formData.append("messages", JSON.stringify(context[i]));
       }
 
       const res = await fetch(form.action, {
@@ -157,16 +293,30 @@ export const TabContent = ({ publish, onSetActiveTab }: TabContentProps) => {
         return value;
       })
     );
-    // const template = [
-    //   merge({}, ...responses.flatMap(({ step, response }) => {
-    //     if (step === 'styles')
-    //     return response.json
-    //   })),
-    // ];
 
     console.log({ template });
 
-    insertTemplate(template);
+    if (isEdit) {
+      const selectedInstanceSelector = selectedInstanceSelectorStore.get();
+
+      if (selectedInstanceSelector && selectedInstanceSelector.length > 1) {
+        const replacementDropTarget = findClosestDroppableTarget(
+          instancesStore.get(),
+          selectedInstanceSelector.slice(1),
+          []
+        );
+        if (replacementDropTarget) {
+          deleteInstance(selectedInstanceSelector);
+          insertTemplate(template, replacementDropTarget);
+        }
+      } else {
+        const dropTarget = findSelectedInstance();
+        dropTarget && insertTemplate(template, dropTarget);
+      }
+    } else {
+      const dropTarget = findSelectedInstance();
+      dropTarget && insertTemplate(template, dropTarget);
+    }
 
     setAiGenerationState({
       state: "idle",
@@ -199,12 +349,26 @@ export const TabContent = ({ publish, onSetActiveTab }: TabContentProps) => {
               required
               disabled={aiGenerationState.state !== "idle"}
             />
-            <Button
-              css={{ width: "100%" }}
-              disabled={aiGenerationState.state !== "idle"}
-            >
-              Generate
-            </Button>
+            <Box css={{ display: "flex", gap: theme.spacing[2] }}>
+              <Button
+                css={{ width: "100%" }}
+                disabled={aiGenerationState.state !== "idle"}
+                name="_action"
+                value="edit"
+                type="submit"
+              >
+                Edit
+              </Button>
+              <Button
+                css={{ width: "100%" }}
+                disabled={aiGenerationState.state !== "idle"}
+                name="_action"
+                value="generate"
+                type="submit"
+              >
+                Generate
+              </Button>
+            </Box>
           </form>
         </Flex>
       </Flex>

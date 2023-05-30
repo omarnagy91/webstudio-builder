@@ -1,3 +1,4 @@
+import camelcase from "camelcase";
 import * as csstree from "css-tree";
 import warnOnce from "warn-once";
 import { parseCssValue as parseCssValueLonghand } from "./parse-css-value";
@@ -80,13 +81,14 @@ export const parseCss = function cssToWS(css: string) {
     }
 
     if (node.type === "Declaration") {
+      const property = camelcase(node.property);
       const stringValue = csstree.generate(node.value);
 
       let parsedCss = {};
 
       try {
         parsedCss = parseCssValue(
-          node.property as Longhand | StyleProperty,
+          property as Longhand | StyleProperty,
           stringValue
         );
       } catch (error) {

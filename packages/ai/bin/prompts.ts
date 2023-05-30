@@ -24,8 +24,7 @@ prompts.forEach((filePath) => {
     fs.mkdirSync(generatedDir, { recursive: true });
   }
 
-  // const generatedFile = `${path.basename(filePath, ".md")}.ts`;
-  const generatedFile = `index.ts`;
+  const generatedFile = `${path.basename(filePath, ".md")}.ts`;
   const generatedPath = path.join(generatedDir, generatedFile);
 
   fs.ensureFileSync(generatedPath);

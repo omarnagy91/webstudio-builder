@@ -17,6 +17,7 @@ type Step = { name: StepName; template: Template; messages: Messages };
 type Steps = Step[];
 
 const schema = zfd.formData({
+  _action: zfd.text(z.enum(["generate", "edit"])),
   prompt: zfd.text(z.string().max(1380)),
   steps: zfd.repeatableOfType(zfd.text(StepSchema)),
   messages: zfd.repeatableOfType(zfd.text().optional()),
@@ -29,6 +30,8 @@ type OpenAIConfig = {
 };
 
 // @todo Add end-to-end types.
+
+const templates = templateJsx;
 
 export const action = async ({ request }: ActionArgs) => {
   if (!isFeatureEnabled("ai")) {
@@ -49,7 +52,7 @@ export const action = async ({ request }: ActionArgs) => {
       const m = formData.messages[index];
       return {
         name: step,
-        template: templateJsx[step],
+        template: templates[formData._action][step],
         messages: typeof m === "string" ? JSON.parse(m) : null,
       };
     });
@@ -189,6 +192,14 @@ const getChainForPrompt = function getChainForPrompt({
           content: responses[i - 1][1],
         });
       }
+
+      console.log({
+        completionRequestMessages: JSON.stringify(
+          completionRequestMessages,
+          null,
+          2
+        ),
+      });
 
       const completion = await complete(steps[i], completionRequestMessages);
       responses[i] = [step, completion.choices[0].message?.content || ""];

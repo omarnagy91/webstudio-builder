@@ -1,39 +1,40 @@
-import store from "immerhin";
 import {
   Instances,
   findTreeInstanceIdsExcludingSlotDescendants,
 } from "@webstudio-is/project-build";
 import {
-  type WsEmbedTemplate,
-  type WsComponentMeta,
   generateDataFromEmbedTemplate,
+  type WsComponentMeta,
+  type WsEmbedTemplate,
 } from "@webstudio-is/react-sdk";
-import {
-  propsStore,
-  stylesStore,
-  selectedInstanceSelectorStore,
-  styleSourceSelectionsStore,
-  styleSourcesStore,
-  instancesStore,
-  selectedStyleSourceSelectorStore,
-  textEditingInstanceSelectorStore,
-  breakpointsStore,
-  registeredComponentMetasStore,
-} from "./nano-states";
-import {
-  type DroppableTarget,
-  type InstanceSelector,
-  findLocalStyleSourcesWithinInstances,
-  insertInstancesMutable,
-  reparentInstanceMutable,
-  getAncestorInstanceSelector,
-  insertPropsCopyMutable,
-  insertStyleSourcesCopyMutable,
-  insertStyleSourceSelectionsCopyMutable,
-  insertStylesCopyMutable,
-} from "./tree-utils";
+import store from "immerhin";
 import { removeByMutable } from "./array-utils";
 import { isBaseBreakpoint } from "./breakpoints";
+import {
+  breakpointsStore,
+  instancesStore,
+  propsStore,
+  registeredComponentMetasStore,
+  selectedInstanceSelectorStore,
+  selectedPageStore,
+  selectedStyleSourceSelectorStore,
+  styleSourceSelectionsStore,
+  styleSourcesStore,
+  stylesStore,
+  textEditingInstanceSelectorStore,
+} from "./nano-states";
+import {
+  findLocalStyleSourcesWithinInstances,
+  getAncestorInstanceSelector,
+  insertInstancesMutable,
+  insertPropsCopyMutable,
+  insertStyleSourceSelectionsCopyMutable,
+  insertStyleSourcesCopyMutable,
+  insertStylesCopyMutable,
+  reparentInstanceMutable,
+  type DroppableTarget,
+  type InstanceSelector,
+} from "./tree-utils";
 
 export const findClosestDroppableComponentIndex = (
   metas: Map<string, WsComponentMeta>,
@@ -126,6 +127,20 @@ export const findClosestDroppableTarget = (
   };
 };
 
+export const findSelectedInstance = () => {
+  const selectedPage = selectedPageStore.get();
+  if (selectedPage === undefined) {
+    return;
+  }
+  return findClosestDroppableTarget(
+    registeredComponentMetasStore.get(),
+    instancesStore.get(),
+    // fallback to root as drop target
+    selectedInstanceSelectorStore.get() ?? [selectedPage.rootInstanceId],
+    []
+  );
+};
+
 export const insertTemplate = (
   template: WsEmbedTemplate,
   dropTarget: DroppableTarget
@@ -144,6 +159,7 @@ export const insertTemplate = (
     styleSources: insertedStyleSources,
     styles: insertedStyles,
   } = generateDataFromEmbedTemplate(template, baseBreakpoint.id);
+
   const rootInstanceId = insertedInstances[0].id;
   store.createTransaction(
     [
