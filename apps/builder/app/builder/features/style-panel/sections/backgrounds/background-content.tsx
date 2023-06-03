@@ -181,6 +181,10 @@ export const BackgroundContent = (props: BackgroundContentProps) => {
                         <br />
                         <br />
                         linear-gradient(...)
+                        <br />
+                        <br />
+                        If pasting from figma, remove the “background” property
+                        name.
                       </>
                     }
                   >
