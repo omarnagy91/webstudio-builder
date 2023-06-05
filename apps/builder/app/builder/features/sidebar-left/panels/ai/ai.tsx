@@ -13,6 +13,7 @@ import {
 import {
   breakpointsStore,
   instancesStore,
+  registeredComponentMetasStore,
   rootInstanceStore,
   selectedInstanceSelectorStore,
   selectedInstanceStore,
@@ -36,10 +37,10 @@ import {
 
 import {
   deleteInstance,
+  findClosestDroppableTarget,
   findSelectedInstance,
   insertTemplate,
 } from "~/shared/instance-utils";
-import { findClosestDroppableTarget } from "~/shared/tree-utils";
 
 type TabContentProps = {
   onSetActiveTab: (tabName: TabName) => void;
@@ -301,6 +302,7 @@ export const TabContent = ({ publish, onSetActiveTab }: TabContentProps) => {
 
       if (selectedInstanceSelector && selectedInstanceSelector.length > 1) {
         const replacementDropTarget = findClosestDroppableTarget(
+          registeredComponentMetasStore.get(),
           instancesStore.get(),
           selectedInstanceSelector.slice(1),
           []
