@@ -166,7 +166,7 @@ export const WebstudioComponentDev = ({
   const Component = components.get(instance.component);
 
   if (condition === false) {
-    return null;
+    return <></>;
   }
 
   if (Component === undefined) {
