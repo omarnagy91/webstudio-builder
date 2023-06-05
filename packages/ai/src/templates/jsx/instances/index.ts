@@ -8,7 +8,7 @@ import { prompt as promptGenerate } from "./__generated__/generate.prompt";
 
 const templateBase = {
   temperature: 0,
-  maxTokens: 3000,
+  // maxTokens: 3000,
   getCode: (response: string) => getCode(response, "jsx"),
   transform: (jsx: string) => {
     const json = parseJsx(

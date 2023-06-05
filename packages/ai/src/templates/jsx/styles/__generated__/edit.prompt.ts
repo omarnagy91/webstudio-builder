@@ -1,11 +1,12 @@
-export const prompt = `The JSX and CSS above describe the following edit request:
+export const prompt = `Given the JSX and CSS above, your task is to rewrite some or all the styles in order to fulfill the following edit request:
 
 \`\`\`
 {prompt-content}
 \`\`\`
 
-Your task is to rewrite the styles to fulfill the request. Use the following rules:
+Use the following rules:
 
+- Be creative and provide innovative design: styles should produce a high-end and aesthetically pleasing result.
 - Only output a valid CSS code block and no other text.
 - The CSS must be minified and therefore you must avoid indentation and new lines.
 - Preserve the CSS above that does not need changes.
@@ -13,5 +14,5 @@ Your task is to rewrite the styles to fulfill the request. Use the following rul
 - Don't assume any styles are inherited and don't generate any global styles.
 - Don't use CSS comments.
 - Don't use shorthand CSS properties: generate CSS using longhand properties only.
-- When generating colors use hex or rgb(a)
+- When generating colors use hex or rgb(a).
 `;

@@ -1,12 +1,12 @@
-export const prompt = `Please edit the JSX above to fulfill the following edit request:
+export const prompt = `Given the JSX above and the following edit request:
 
 \`\`\`
 {prompt-content}
 \`\`\`
 
-Respond with the original JSX (unchanged) when the edit request is only stylistic. By stylistic I mean something like "change the color", "make it vertical" etc. Essentially everything that can be done with CSS and the existing JSX.
+Respond with the original JSX code when the edit request is only stylistic and doesn't need any changes to the JSX tree. Essentially you should return the original JSX above when the edit request can be done with CSS only.
 
-Otherwise please respond with a JSX tree using the following Rules:
+Otherwise please respond with a JSX tree using the following rules:
 
 - Don't import or use any dependency or external library.
 - Only output a valid JSX code block and no other text.
@@ -31,5 +31,5 @@ Otherwise please respond with a JSX tree using the following Rules:
 - Add an \`alt\` prop to Image instances with a description that is no longer than 32 characters.
 - Unaltered parts of the JSX should stay as-is, preserving \`className\` etc.
 - For styling keep existing \`className\`s and if necessary add a highly reusable \`className\` prop with the following format: \`s-[number]\`.
-- Don't generate CSS!
+- Don't generate CSS.
 `;

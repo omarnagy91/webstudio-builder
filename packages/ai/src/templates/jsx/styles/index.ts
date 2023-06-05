@@ -6,7 +6,7 @@ import { prompt as promptEdit } from "./__generated__/edit.prompt";
 import { prompt as promptGenerate } from "./__generated__/generate.prompt";
 
 const templateBase = {
-  maxTokens: 3000,
+  // maxTokens: 3000,
   getCode: (response: string) => getCode(response, "css"),
   transform: (css: string) => {
     return parseCss(css);
@@ -16,12 +16,12 @@ const templateBase = {
 
 export const templateGenerate: Template = {
   prompt: promptGenerate,
-  temperature: 0.5,
+  temperature: 0.7,
   ...templateBase,
 };
 
 export const templateEdit: Template = {
   ...templateBase,
-  temperature: 0,
+  temperature: 0.2,
   prompt: promptEdit,
 };
