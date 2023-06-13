@@ -2,20 +2,7 @@ export const prompt = `Given the following strict TypeScript definitions:
 
 \`\`\`typescript
 type InstanceId = string;
-type Component =
-  | "Box"
-  | "Heading"
-  | "TextBlock"
-  | "Link"
-  | "List"
-  | "ListItem"
-  | "Image"
-  | "Label"
-  | "Input"
-  | "TextArea"
-  | "RadioButton"
-  | "Checkbox"
-  | "Button";
+type Component = {components};
 
 // Text is a text node.
 type Text = {
@@ -73,4 +60,10 @@ Rules:
 - Don't add side-effects.
 - Don't rely on globals.
 - Use hex or rgb(a) for colors.
+
+Additional project details:
+
+- Palette: {palette}
+- Current Color mode: {colorMode}
+  {selectedInstance}
 `;

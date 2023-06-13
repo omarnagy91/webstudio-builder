@@ -14,3 +14,9 @@ Your task is to generate styles for it using the following rules:
 - Don't use CSS comments.
 - Don't use shorthand CSS properties: generate CSS using longhand properties only.
 - When generating colors use hex or rgb(a).
+
+Additional project details:
+
+- Palette: {palette}
+- Current Color mode: {colorMode}
+  {selectedInstance}
